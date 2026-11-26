@@ -59,7 +59,7 @@ def nav2(items, depth=0):
     s = '<ul>'
     for t in items:
         s += f'<li class="d{depth}"><a href="#{t["id"]}">{t["name"]}</a>'
-        if depth == 0 and t["children"] and t["name"][:3] in ("8. ", "11."):
+        if depth == 0 and t["children"] and t["name"][:3] in ("8. ", "10.", "11."):
             s += nav2(t["children"], 1)
         s += '</li>'
     return s + '</ul>'

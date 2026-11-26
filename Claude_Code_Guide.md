@@ -397,12 +397,44 @@ The context window is limited. As it fills, responses can get slower and less fo
 
 > 💡 **Rule of thumb:** one task per session. `/clear` between tasks is cheap, and it beats dragging old, unrelated context along.
 
-### Saving work across sessions
+### 10.1 Saving work across sessions
 For long projects, ask Claude to keep a progress file:
 ```text
 > write our plan and progress so far to PLAN.md so we can pick up later
 ```
 Next session: `> read PLAN.md and continue from where we left off`.
+
+### 10.2 Before You Exit: End-of-Session Checklist
+
+A minute spent wrapping up saves you from lost work, stray processes, and having to rebuild context next time.
+
+| # | Step | How |
+|---|---|---|
+| 1 | **Check the work** | Review changes with `!git status` / `!git diff`, or ask *"summarize everything you changed this session"* |
+| 2 | **Run tests and lint** | *"Run the tests and confirm they pass."* Don't leave the code half-broken. |
+| 3 | **Check for leaked secrets** | Make sure no keys, passwords, or debug files were written into the project |
+| 4 | **Save the work** | Commit, or at least `git stash`. Changes stay on disk, but a commit is a checkpoint you can return to. |
+| 5 | **Leave a handoff note** | Have Claude write what was done and what's next (see below) |
+| 6 | **Keep what you learned** | Add repeated corrections to `CLAUDE.md`; say *"remember that…"* for personal preferences (auto-memory) |
+| 7 | **Stop background processes** | Dev servers or watchers Claude started, background sessions (`claude agents`, then `claude stop <id>`), recurring `/loop` tasks |
+| 8 | **Tidy worktrees** | If you used `claude -w`, merge or remove the worktree so forgotten copies don't pile up |
+| 9 | **Check usage** *(optional)* | `/cost` shows what the session used |
+| 10 | **Exit** | `/exit`, `Ctrl+C` twice, or `Ctrl+D`. The conversation is saved, so you can resume it with `claude -c` / `claude -r`. |
+
+#### Handoff note prompt
+```text
+> write a handoff to PLAN.md: what we did, decisions made and why, what's left,
+  and any open questions or known issues
+```
+Next time: `> read PLAN.md and continue`. A written note is more dependable than a resumed session. It survives `/clear` and compaction, and teammates can read it.
+
+#### Capturing lessons
+```text
+> add a rule to CLAUDE.md: we use pnpm, not npm
+> remember that I prefer small PRs under 300 lines
+```
+
+> 💡 **Quick version:** review → test → commit → handoff note → update CLAUDE.md → stop background processes → `/exit`.
 
 ---
 
@@ -747,6 +779,8 @@ Copy and adapt these:
 │ claude -r               resume a past session                            │
 │ claude -p "prompt"      one-shot, print and exit (scripts/CI)            │
 │ claude -w name          isolated git worktree session                    │
+├──────────────────────────────── BEFORE EXIT ─────────────────────────────┤
+│ review → test → commit → handoff note → update CLAUDE.md → /exit         │
 ├──────────────────────────────── IN-SESSION ──────────────────────────────┤
 │ Esc                     stop Claude                                      │
 │ Esc Esc                 rewind to earlier message                        │

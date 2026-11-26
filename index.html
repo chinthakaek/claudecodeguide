@@ -118,7 +118,7 @@
   <nav class="sidebar" aria-label="Table of contents">
     <p class="brand">Claude Code Guide</p>
     <p class="sub">Beginner's guide &amp; best practices</p>
-    <ul><li class="d0"><a href="#1-what-is-claude-code">1. What is Claude Code?</a></li><li class="d0"><a href="#2-installation--first-run">2. Installation &amp; First Run</a></li><li class="d0"><a href="#3-your-first-session">3. Your First Session</a></li><li class="d0"><a href="#4-core-concepts">4. Core Concepts</a></li><li class="d0"><a href="#5-essential-keyboard-shortcuts--input-tricks">5. Essential Keyboard Shortcuts &amp; Input Tricks</a></li><li class="d0"><a href="#6-slash-commands-youll-actually-use">6. Slash Commands You'll Actually Use</a></li><li class="d0"><a href="#7-permission-modes-staying-in-control">7. Permission Modes: Staying in Control</a></li><li class="d0"><a href="#8-memory-claudemd--auto-memory">8. Memory: CLAUDE.md &amp; Auto-Memory</a><ul><li class="d1"><a href="#81-claudemd-teaching-claude-about-your-project">8.1 CLAUDE.md: Teaching Claude About Your Project</a></li><li class="d1"><a href="#82-auto-memory-what-claude-learns-over-time">8.2 Auto-Memory: What Claude Learns Over Time</a></li><li class="d1"><a href="#83-which-mechanism-should-i-use">8.3 Which Mechanism Should I Use?</a></li></ul></li><li class="d0"><a href="#9-command-line-usage-flags--scripting">9. Command-Line Usage (Flags &amp; Scripting)</a></li><li class="d0"><a href="#10-managing-context--sessions">10. Managing Context &amp; Sessions</a></li><li class="d0"><a href="#11-extending-claude-code">11. Extending Claude Code</a><ul><li class="d1"><a href="#111-skills">11.1 Skills</a></li><li class="d1"><a href="#112-subagents">11.2 Subagents</a></li><li class="d1"><a href="#113-mcp-servers">11.3 MCP Servers</a></li><li class="d1"><a href="#114-hooks">11.4 Hooks</a></li><li class="d1"><a href="#115-plugins">11.5 Plugins</a></li></ul></li><li class="d0"><a href="#12-best-practices">12. Best Practices</a></li><li class="d0"><a href="#13-effective-prompting-patterns">13. Effective Prompting Patterns</a></li><li class="d0"><a href="#14-safety--security">14. Safety &amp; Security</a></li><li class="d0"><a href="#15-troubleshooting">15. Troubleshooting</a></li><li class="d0"><a href="#16-quick-reference-cheat-sheet">16. Quick Reference Cheat Sheet</a></li><li class="d0"><a href="#further-reading">Further Reading</a></li></ul>
+    <ul><li class="d0"><a href="#1-what-is-claude-code">1. What is Claude Code?</a></li><li class="d0"><a href="#2-installation--first-run">2. Installation &amp; First Run</a></li><li class="d0"><a href="#3-your-first-session">3. Your First Session</a></li><li class="d0"><a href="#4-core-concepts">4. Core Concepts</a></li><li class="d0"><a href="#5-essential-keyboard-shortcuts--input-tricks">5. Essential Keyboard Shortcuts &amp; Input Tricks</a></li><li class="d0"><a href="#6-slash-commands-youll-actually-use">6. Slash Commands You'll Actually Use</a></li><li class="d0"><a href="#7-permission-modes-staying-in-control">7. Permission Modes: Staying in Control</a></li><li class="d0"><a href="#8-memory-claudemd--auto-memory">8. Memory: CLAUDE.md &amp; Auto-Memory</a><ul><li class="d1"><a href="#81-claudemd-teaching-claude-about-your-project">8.1 CLAUDE.md: Teaching Claude About Your Project</a></li><li class="d1"><a href="#82-auto-memory-what-claude-learns-over-time">8.2 Auto-Memory: What Claude Learns Over Time</a></li><li class="d1"><a href="#83-which-mechanism-should-i-use">8.3 Which Mechanism Should I Use?</a></li></ul></li><li class="d0"><a href="#9-command-line-usage-flags--scripting">9. Command-Line Usage (Flags &amp; Scripting)</a></li><li class="d0"><a href="#10-managing-context--sessions">10. Managing Context &amp; Sessions</a><ul><li class="d1"><a href="#101-saving-work-across-sessions">10.1 Saving work across sessions</a></li><li class="d1"><a href="#102-before-you-exit-end-of-session-checklist">10.2 Before You Exit: End-of-Session Checklist</a></li></ul></li><li class="d0"><a href="#11-extending-claude-code">11. Extending Claude Code</a><ul><li class="d1"><a href="#111-skills">11.1 Skills</a></li><li class="d1"><a href="#112-subagents">11.2 Subagents</a></li><li class="d1"><a href="#113-mcp-servers">11.3 MCP Servers</a></li><li class="d1"><a href="#114-hooks">11.4 Hooks</a></li><li class="d1"><a href="#115-plugins">11.5 Plugins</a></li></ul></li><li class="d0"><a href="#12-best-practices">12. Best Practices</a></li><li class="d0"><a href="#13-effective-prompting-patterns">13. Effective Prompting Patterns</a></li><li class="d0"><a href="#14-safety--security">14. Safety &amp; Security</a></li><li class="d0"><a href="#15-troubleshooting">15. Troubleshooting</a></li><li class="d0"><a href="#16-quick-reference-cheat-sheet">16. Quick Reference Cheat Sheet</a></li><li class="d0"><a href="#further-reading">Further Reading</a></li></ul>
   </nav>
   <main><article>
 <h1 id="claude-code-a-beginners-guide-and-best-practices">Claude Code: A Beginner's Guide and Best Practices</h1>
@@ -745,11 +745,86 @@ claude agents            # list background sessions
 <blockquote>
 <p>💡 <strong>Rule of thumb:</strong> one task per session. <code>/clear</code> between tasks is cheap, and it beats dragging old, unrelated context along.</p>
 </blockquote>
-<h3 id="saving-work-across-sessions">Saving work across sessions</h3>
+<h3 id="101-saving-work-across-sessions">10.1 Saving work across sessions</h3>
 <p>For long projects, ask Claude to keep a progress file:</p>
 <pre><code class="language-text">&gt; write our plan and progress so far to PLAN.md so we can pick up later
 </code></pre>
 <p>Next session: <code>&gt; read PLAN.md and continue from where we left off</code>.</p>
+<h3 id="102-before-you-exit-end-of-session-checklist">10.2 Before You Exit: End-of-Session Checklist</h3>
+<p>A minute spent wrapping up saves you from lost work, stray processes, and having to rebuild context next time.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Step</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Check the work</strong></td>
+<td>Review changes with <code>!git status</code> / <code>!git diff</code>, or ask <em>"summarize everything you changed this session"</em></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Run tests and lint</strong></td>
+<td><em>"Run the tests and confirm they pass."</em> Don't leave the code half-broken.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Check for leaked secrets</strong></td>
+<td>Make sure no keys, passwords, or debug files were written into the project</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Save the work</strong></td>
+<td>Commit, or at least <code>git stash</code>. Changes stay on disk, but a commit is a checkpoint you can return to.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Leave a handoff note</strong></td>
+<td>Have Claude write what was done and what's next (see below)</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Keep what you learned</strong></td>
+<td>Add repeated corrections to <code>CLAUDE.md</code>; say <em>"remember that…"</em> for personal preferences (auto-memory)</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Stop background processes</strong></td>
+<td>Dev servers or watchers Claude started, background sessions (<code>claude agents</code>, then <code>claude stop &lt;id&gt;</code>), recurring <code>/loop</code> tasks</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Tidy worktrees</strong></td>
+<td>If you used <code>claude -w</code>, merge or remove the worktree so forgotten copies don't pile up</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Check usage</strong> <em>(optional)</em></td>
+<td><code>/cost</code> shows what the session used</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Exit</strong></td>
+<td><code>/exit</code>, <code>Ctrl+C</code> twice, or <code>Ctrl+D</code>. The conversation is saved, so you can resume it with <code>claude -c</code> / <code>claude -r</code>.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="handoff-note-prompt">Handoff note prompt</h4>
+<pre><code class="language-text">&gt; write a handoff to PLAN.md: what we did, decisions made and why, what's left,
+  and any open questions or known issues
+</code></pre>
+<p>Next time: <code>&gt; read PLAN.md and continue</code>. A written note is more dependable than a resumed session. It survives <code>/clear</code> and compaction, and teammates can read it.</p>
+<h4 id="capturing-lessons">Capturing lessons</h4>
+<pre><code class="language-text">&gt; add a rule to CLAUDE.md: we use pnpm, not npm
+&gt; remember that I prefer small PRs under 300 lines
+</code></pre>
+<blockquote>
+<p>💡 <strong>Quick version:</strong> review → test → commit → handoff note → update CLAUDE.md → stop background processes → <code>/exit</code>.</p>
+</blockquote>
 <hr />
 <h2 id="11-extending-claude-code">11. Extending Claude Code</h2>
 <p>You don't need any of this on day one. Come back once you're comfortable with the basics.</p>
@@ -1216,6 +1291,8 @@ claude plugin validate ./my-plugin
 │ claude -r               resume a past session                            │
 │ claude -p &quot;prompt&quot;      one-shot, print and exit (scripts/CI)            │
 │ claude -w name          isolated git worktree session                    │
+├──────────────────────────────── BEFORE EXIT ─────────────────────────────┤
+│ review → test → commit → handoff note → update CLAUDE.md → /exit         │
 ├──────────────────────────────── IN-SESSION ──────────────────────────────┤
 │ Esc                     stop Claude                                      │
 │ Esc Esc                 rewind to earlier message                        │

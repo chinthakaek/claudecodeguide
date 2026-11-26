@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code: A Beginner&#x27;s Guide and Best Practices</title>
+<meta name="description" content="A practical beginner's guide to Claude Code, Anthropic's terminal-based AI coding assistant: setup, commands, memory, skills, subagents, hooks, and best practices.">
+<meta property="og:title" content="Claude Code: A Beginner&#x27;s Guide and Best Practices">
+<meta property="og:description" content="Setup, commands, memory, skills, subagents, hooks, and best practices for Claude Code.">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📘</text></svg>">
+<style>
+  :root {
+    --bg: #faf9f6; --panel: #ffffff; --text: #1f1e1b; --muted: #6b6860;
+    --border: #e4e1d8; --accent: #c4613f; --accent-soft: #f6e7e0;
+    --code-bg: #f2f0ea; --pre-bg: #1e1d1a; --pre-text: #ece9e1;
+    --callout-bg: #fbf3e6; --callout-border: #d9a54a; --row-alt: #faf8f3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1917; --panel: #22211e; --text: #e9e6de; --muted: #a29e93;
+      --border: #3a3833; --accent: #e08a68; --accent-soft: #3a2a23;
+      --code-bg: #2d2b27; --pre-bg: #121110; --pre-text: #ece9e1;
+      --callout-bg: #2e2820; --callout-border: #b88a3a; --row-alt: #26241f;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .layout { display: flex; min-height: 100vh; }
+  nav.sidebar {
+    position: sticky; top: 0; align-self: flex-start;
+    width: 290px; flex-shrink: 0; height: 100vh; overflow-y: auto;
+    padding: 28px 18px; border-right: 1px solid var(--border); background: var(--panel);
+  }
+  nav.sidebar .brand { font-weight: 700; font-size: 15px; margin: 0 0 4px 8px; }
+  nav.sidebar .sub { font-size: 12px; color: var(--muted); margin: 0 0 18px 8px; }
+  nav.sidebar ul { list-style: none; margin: 0; padding: 0; }
+  nav.sidebar li a {
+    display: block; padding: 5px 8px; border-radius: 6px;
+    color: var(--text); text-decoration: none; font-size: 14px;
+  }
+  nav.sidebar li.d1 a { padding-left: 24px; font-size: 13px; color: var(--muted); }
+  nav.sidebar li a:hover { background: var(--accent-soft); }
+  nav.sidebar li a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  main { flex: 1; min-width: 0; padding: 40px 56px 96px; }
+  article { max-width: 920px; margin: 0 auto; }
+  h1 { font-size: 2.2rem; line-height: 1.2; margin: 0 0 12px; }
+  h2 { font-size: 1.6rem; margin: 56px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 1.25rem; margin: 36px 0 12px; }
+  h4 { font-size: 1.05rem; margin: 26px 0 10px; color: var(--accent); }
+  a { color: var(--accent); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.88em; background: var(--code-bg); padding: 2px 6px; border-radius: 4px;
+  }
+  pre {
+    position: relative; background: var(--pre-bg); color: var(--pre-text);
+    padding: 16px 18px; border-radius: 10px; overflow-x: auto; line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; font-size: 13.5px; color: inherit; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px; font-size: 12px;
+    background: rgba(255,255,255,0.1); color: #ddd; border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px; padding: 3px 9px; cursor: pointer; opacity: 0; transition: opacity .15s;
+  }
+  pre:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { background: rgba(255,255,255,0.2); }
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; background: var(--panel); }
+  th, td { border: 1px solid var(--border); padding: 9px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); font-weight: 600; }
+  tbody tr:nth-child(even) { background: var(--row-alt); }
+  blockquote {
+    margin: 18px 0; padding: 12px 16px; background: var(--callout-bg);
+    border-left: 4px solid var(--callout-border); border-radius: 0 8px 8px 0;
+  }
+  blockquote p { margin: 0; }
+  footer.site-footer {
+    margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
+  }
+  .menu-toggle { display: none; }
+  .to-top {
+    position: fixed; right: 22px; bottom: 22px; width: 42px; height: 42px; border-radius: 50%;
+    background: var(--accent); color: #fff; border: none; font-size: 18px; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2); opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .to-top.show { opacity: 1; pointer-events: auto; }
+  @media (max-width: 900px) {
+    .layout { display: block; }
+    nav.sidebar {
+      position: fixed; z-index: 10; left: 0; top: 0; transform: translateX(-100%);
+      transition: transform .2s; box-shadow: 2px 0 12px rgba(0,0,0,.2);
+    }
+    nav.sidebar.open { transform: none; }
+    .menu-toggle {
+      display: block; position: fixed; z-index: 11; top: 12px; left: 12px;
+      background: var(--accent); color: #fff; border: none; border-radius: 8px;
+      padding: 7px 12px; font-size: 15px; cursor: pointer;
+    }
+    main { padding: 64px 20px 80px; }
+  }
+  @media print {
+    nav.sidebar, .menu-toggle, .to-top, .copy-btn { display: none !important; }
+    main { padding: 0; }
+    pre { white-space: pre-wrap; }
+  }
+</style>
+</head>
+<body>
+<button class="menu-toggle" aria-label="Toggle navigation">☰ Contents</button>
+<div class="layout">
+  <nav class="sidebar" aria-label="Table of contents">
+    <p class="brand">Claude Code Guide</p>
+    <p class="sub">Beginner's guide &amp; best practices</p>
+    <ul><li class="d0"><a href="#1-what-is-claude-code">1. What is Claude Code?</a></li><li class="d0"><a href="#2-installation--first-run">2. Installation &amp; First Run</a></li><li class="d0"><a href="#3-your-first-session">3. Your First Session</a></li><li class="d0"><a href="#4-core-concepts">4. Core Concepts</a></li><li class="d0"><a href="#5-essential-keyboard-shortcuts--input-tricks">5. Essential Keyboard Shortcuts &amp; Input Tricks</a></li><li class="d0"><a href="#6-slash-commands-youll-actually-use">6. Slash Commands You'll Actually Use</a></li><li class="d0"><a href="#7-permission-modes-staying-in-control">7. Permission Modes: Staying in Control</a></li><li class="d0"><a href="#8-memory-claudemd--auto-memory">8. Memory: CLAUDE.md &amp; Auto-Memory</a><ul><li class="d1"><a href="#81-claudemd-teaching-claude-about-your-project">8.1 CLAUDE.md: Teaching Claude About Your Project</a></li><li class="d1"><a href="#82-auto-memory-what-claude-learns-over-time">8.2 Auto-Memory: What Claude Learns Over Time</a></li><li class="d1"><a href="#83-which-mechanism-should-i-use">8.3 Which Mechanism Should I Use?</a></li></ul></li><li class="d0"><a href="#9-command-line-usage-flags--scripting">9. Command-Line Usage (Flags &amp; Scripting)</a></li><li class="d0"><a href="#10-managing-context--sessions">10. Managing Context &amp; Sessions</a></li><li class="d0"><a href="#11-extending-claude-code">11. Extending Claude Code</a><ul><li class="d1"><a href="#111-skills">11.1 Skills</a></li><li class="d1"><a href="#112-subagents">11.2 Subagents</a></li><li class="d1"><a href="#113-mcp-servers">11.3 MCP Servers</a></li><li class="d1"><a href="#114-hooks">11.4 Hooks</a></li><li class="d1"><a href="#115-plugins">11.5 Plugins</a></li></ul></li><li class="d0"><a href="#12-best-practices">12. Best Practices</a></li><li class="d0"><a href="#13-effective-prompting-patterns">13. Effective Prompting Patterns</a></li><li class="d0"><a href="#14-safety--security">14. Safety &amp; Security</a></li><li class="d0"><a href="#15-troubleshooting">15. Troubleshooting</a></li><li class="d0"><a href="#16-quick-reference-cheat-sheet">16. Quick Reference Cheat Sheet</a></li><li class="d0"><a href="#further-reading">Further Reading</a></li></ul>
+  </nav>
+  <main><article>
+<h1 id="claude-code-a-beginners-guide-and-best-practices">Claude Code: A Beginner's Guide and Best Practices</h1>
+<blockquote>
+<p>A hands-on guide for people new to <strong>Claude Code</strong>, Anthropic's AI coding assistant that runs in your terminal.
+Checked against Claude Code <strong>v2.1.x</strong>. Features change often. Run <code>claude --help</code> or <code>/help</code> to see what your version has.</p>
+</blockquote>
+<hr />
+<h2 id="1-what-is-claude-code">1. What is Claude Code?</h2>
+<p>Claude Code is an <strong>agentic</strong> coding tool. It is more than a chatbot that hands you snippets. It can:</p>
+<ul>
+<li><strong>Read and search</strong> your codebase to understand how it works</li>
+<li><strong>Edit files</strong> directly, across many files at once</li>
+<li><strong>Run commands</strong> such as tests, builds, linters, and git</li>
+<li><strong>Plan and carry out</strong> multi-step tasks, checking its own work as it goes</li>
+<li><strong>Connect to outside tools</strong> (GitHub, Jira, databases, browsers) through MCP servers</li>
+</ul>
+<p>Think of it as a capable pair programmer who works in your terminal, with your files, and with your permission.</p>
+<p>It also runs in an IDE (VS Code, JetBrains), the desktop app, and on the web (claude.ai/code). This guide covers the <strong>CLI</strong>, but most of the ideas apply everywhere.</p>
+<hr />
+<h2 id="2-installation--first-run">2. Installation &amp; First Run</h2>
+<h3 id="install">Install</h3>
+<p><strong>Native installer (recommended):</strong></p>
+<pre><code class="language-bash">curl -fsSL https://claude.ai/install.sh | bash
+</code></pre>
+<p><strong>Or with npm</strong> (needs Node.js 18+):</p>
+<pre><code class="language-bash">npm install -g @anthropic-ai/claude-code
+</code></pre>
+<h3 id="verify-and-log-in">Verify and log in</h3>
+<pre><code class="language-bash">claude --version     # confirm it's installed
+claude doctor        # check your install is healthy
+cd ~/my-project      # go to a project folder
+claude               # start; the first run walks you through login
+</code></pre>
+<p>You can log in with a Claude subscription (Pro/Max/Team/Enterprise) or an Anthropic Console (API) account. Your organization may also set it up to use Amazon Bedrock, Google Vertex AI, or Microsoft Foundry.</p>
+<h3 id="keep-it-updated">Keep it updated</h3>
+<pre><code class="language-bash">claude update
+</code></pre>
+<blockquote>
+<p>💡 <strong>Tip:</strong> Always start Claude Code <strong>from your project's root folder</strong>. Claude can only see that folder (and any folders you add) by default.</p>
+</blockquote>
+<hr />
+<h2 id="3-your-first-session">3. Your First Session</h2>
+<p>Here is a good first ten minutes in a new project:</p>
+<pre><code class="language-text">&gt; what does this project do? give me a high-level overview
+
+&gt; where is the main entry point, and how is the code organized?
+
+&gt; /init
+</code></pre>
+<p><code>/init</code> looks at your codebase and writes a <code>CLAUDE.md</code> file, which is Claude's notes about your project (see <a href="#8-memory-claudemd--auto-memory">Section 8</a>). Read it, fix anything wrong, and commit it.</p>
+<p>Then try a small, real task:</p>
+<pre><code class="language-text">&gt; the README's setup instructions are out of date. check package.json and update them
+</code></pre>
+<p>Watch what Claude does. It reads files, proposes edits, and <strong>asks permission</strong> before changing anything or running commands. You approve, reject, or redirect it.</p>
+<hr />
+<h2 id="4-core-concepts">4. Core Concepts</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Session</strong></td>
+<td>One conversation. Claude remembers everything said in it.</td>
+</tr>
+<tr>
+<td><strong>Context window</strong></td>
+<td>How much Claude can "hold in mind" at once. Long sessions fill it up.</td>
+</tr>
+<tr>
+<td><strong>Tools</strong></td>
+<td>Actions Claude can take: Read, Edit, Write, Bash, search, web fetch, and so on.</td>
+</tr>
+<tr>
+<td><strong>Permissions</strong></td>
+<td>Rules for which tools Claude may use without asking you.</td>
+</tr>
+<tr>
+<td><strong>CLAUDE.md</strong></td>
+<td>An instructions file you write. It's loaded at the start of every session.</td>
+</tr>
+<tr>
+<td><strong>Auto-memory</strong></td>
+<td>Notes Claude saves for itself (your preferences, corrections) that carry across sessions.</td>
+</tr>
+<tr>
+<td><strong>Subagents</strong></td>
+<td>Helper agents Claude can start for focused side tasks, each with its own context.</td>
+</tr>
+<tr>
+<td><strong>Skills / slash commands</strong></td>
+<td>Saved, reusable instructions, run with <code>/name</code>.</td>
+</tr>
+<tr>
+<td><strong>MCP servers</strong></td>
+<td>Plugins that connect Claude to outside systems.</td>
+</tr>
+<tr>
+<td><strong>Hooks</strong></td>
+<td>Shell commands that run automatically at set points (for example, after every file edit).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-essential-keyboard-shortcuts--input-tricks">5. Essential Keyboard Shortcuts &amp; Input Tricks</h2>
+<table>
+<thead>
+<tr>
+<th>Key / Syntax</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Enter</code></td>
+<td>Send message</td>
+</tr>
+<tr>
+<td><code>Shift+Enter</code> or <code>\</code> + <code>Enter</code></td>
+<td>New line (multi-line prompt). Run <code>/terminal-setup</code> if Shift+Enter doesn't work.</td>
+</tr>
+<tr>
+<td><code>Esc</code></td>
+<td><strong>Stop Claude</strong> mid-action. Nothing is lost, so you can redirect it.</td>
+</tr>
+<tr>
+<td><code>Esc</code> <code>Esc</code></td>
+<td><strong>Rewind</strong>: jump back to an earlier message (and optionally undo code changes)</td>
+</tr>
+<tr>
+<td><code>Shift+Tab</code></td>
+<td>Cycle permission modes (normal → auto-accept edits → plan mode …)</td>
+</tr>
+<tr>
+<td><code>Ctrl+C</code></td>
+<td>Cancel current input. Press twice to exit.</td>
+</tr>
+<tr>
+<td><code>Ctrl+R</code></td>
+<td>Search prompt history</td>
+</tr>
+<tr>
+<td><code>↑</code> / <code>↓</code></td>
+<td>Scroll through previous prompts</td>
+</tr>
+<tr>
+<td><code>@path/to/file</code></td>
+<td><strong>Mention a file or folder</strong> so Claude reads it (with tab-completion)</td>
+</tr>
+<tr>
+<td><code>!command</code></td>
+<td><strong>Run a shell command yourself</strong>; the output goes into the conversation</td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td>Open the slash-command and skill menu</td>
+</tr>
+<tr>
+<td>Drag &amp; drop / paste</td>
+<td>Add <strong>images</strong> (screenshots, mockups, diagrams)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <code>Esc</code> is your best friend. If Claude heads the wrong way, interrupt early. Don't wait for it to finish.</p>
+</blockquote>
+<hr />
+<h2 id="6-slash-commands-youll-actually-use">6. Slash Commands You'll Actually Use</h2>
+<p>Type <code>/</code> in a session to see every command. These are the main ones:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/help</code></td>
+<td>List commands and help</td>
+</tr>
+<tr>
+<td><code>/init</code></td>
+<td>Create a <code>CLAUDE.md</code> for the project</td>
+</tr>
+<tr>
+<td><code>/clear</code></td>
+<td><strong>Start fresh</strong>: wipe the conversation context</td>
+</tr>
+<tr>
+<td><code>/compact [focus]</code></td>
+<td>Summarize the conversation to free up context, e.g. <code>/compact keep the API design decisions</code></td>
+</tr>
+<tr>
+<td><code>/context</code></td>
+<td>See what's filling your context window</td>
+</tr>
+<tr>
+<td><code>/model</code></td>
+<td>Switch model (e.g. Opus for hard problems, Sonnet/Haiku for speed)</td>
+</tr>
+<tr>
+<td><code>/resume</code></td>
+<td>Pick up a previous session</td>
+</tr>
+<tr>
+<td><code>/rewind</code></td>
+<td>Go back to an earlier point in the conversation or code</td>
+</tr>
+<tr>
+<td><code>/permissions</code></td>
+<td>View and edit which tools are allowed</td>
+</tr>
+<tr>
+<td><code>/memory</code></td>
+<td>Edit your CLAUDE.md memory files</td>
+</tr>
+<tr>
+<td><code>/config</code></td>
+<td>Open settings (theme, model, and more)</td>
+</tr>
+<tr>
+<td><code>/cost</code> / <code>/usage</code></td>
+<td>See token usage and spend</td>
+</tr>
+<tr>
+<td><code>/mcp</code></td>
+<td>Manage MCP server connections</td>
+</tr>
+<tr>
+<td><code>/agents</code></td>
+<td>Create and manage custom subagents</td>
+</tr>
+<tr>
+<td><code>/hooks</code></td>
+<td>Configure hooks</td>
+</tr>
+<tr>
+<td><code>/code-review</code></td>
+<td>Review your current changes for bugs</td>
+</tr>
+<tr>
+<td><code>/security-review</code></td>
+<td>Security-focused review of pending changes</td>
+</tr>
+<tr>
+<td><code>/doctor</code></td>
+<td>Diagnose installation problems</td>
+</tr>
+<tr>
+<td><code>/bug</code></td>
+<td>Report a problem to Anthropic</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-permission-modes-staying-in-control">7. Permission Modes: Staying in Control</h2>
+<p>By default, Claude <strong>asks before</strong> editing files or running commands. You can change this.</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Behavior</th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Default (manual)</strong></td>
+<td>Asks before edits and most commands</td>
+<td>Learning, unfamiliar code, risky work</td>
+</tr>
+<tr>
+<td><strong>Accept Edits</strong></td>
+<td>Edits files without asking; still asks before shell commands</td>
+<td>You trust the direction and want speed</td>
+</tr>
+<tr>
+<td><strong>Plan Mode</strong></td>
+<td><strong>Read-only.</strong> Claude explores and writes a plan but changes nothing</td>
+<td>Big or unclear tasks. Agree on the plan first.</td>
+</tr>
+<tr>
+<td><strong>Auto</strong></td>
+<td>Claude decides when to proceed, with safety checks</td>
+<td>Experienced users on routine work</td>
+</tr>
+<tr>
+<td><strong>Bypass Permissions</strong></td>
+<td>Never asks</td>
+<td><strong>Only</strong> in throwaway sandboxes or containers</td>
+</tr>
+</tbody>
+</table>
+<p>Switch modes with <strong><code>Shift+Tab</code></strong> during a session, or at launch:</p>
+<pre><code class="language-bash">claude --permission-mode plan
+</code></pre>
+<h3 id="allow-listing-trusted-commands">Allow-listing trusted commands</h3>
+<p>When Claude asks to run something, you can choose "always allow". You can also set rules in <code>.claude/settings.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;permissions&quot;: {
+    &quot;allow&quot;: [
+      &quot;Bash(npm run test:*)&quot;,
+      &quot;Bash(npm run lint)&quot;,
+      &quot;Bash(git status)&quot;,
+      &quot;Bash(git diff:*)&quot;
+    ],
+    &quot;deny&quot;: [
+      &quot;Bash(rm -rf:*)&quot;,
+      &quot;Read(./.env)&quot;,
+      &quot;Read(./secrets/**)&quot;
+    ]
+  }
+}
+</code></pre>
+<blockquote>
+<p>💡 Run <code>/fewer-permission-prompts</code> to build an allow-list automatically from commands you approve often.</p>
+</blockquote>
+<h3 id="settings-file-locations">Settings file locations</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Scope</th>
+<th>Commit to git?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>~/.claude/settings.json</code></td>
+<td>You, across all projects</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>.claude/settings.json</code></td>
+<td>This project, shared with the team</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td><code>.claude/settings.local.json</code></td>
+<td>This project, just you</td>
+<td>❌ No</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-memory-claudemd--auto-memory">8. Memory: CLAUDE.md &amp; Auto-Memory</h2>
+<p>Every session starts with a blank slate. Claude Code has two ways to carry knowledge from one session to the next:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>CLAUDE.md</strong></th>
+<th><strong>Auto-memory</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Who writes it</td>
+<td><strong>You</strong> (Claude can help)</td>
+<td><strong>Claude</strong>, as it learns</td>
+</tr>
+<tr>
+<td>What it holds</td>
+<td>Instructions: commands, rules, architecture</td>
+<td>Facts: your preferences, corrections, project context</td>
+</tr>
+<tr>
+<td>Shared with team?</td>
+<td>Yes (project CLAUDE.md is committed)</td>
+<td>No, it's private to you and stored on your machine</td>
+</tr>
+<tr>
+<td>Loaded</td>
+<td>In full, every session</td>
+<td>An index every session; the details when relevant</td>
+</tr>
+</tbody>
+</table>
+<h3 id="81-claudemd-teaching-claude-about-your-project">8.1 CLAUDE.md: Teaching Claude About Your Project</h3>
+<p><code>CLAUDE.md</code> is loaded into <strong>every session</strong> automatically. Use it to tell Claude what it can't easily work out from the code.</p>
+<h4 id="where-it-can-live">Where it can live</h4>
+<table>
+<thead>
+<tr>
+<th>Location</th>
+<th>Applies to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>~/.claude/CLAUDE.md</code></td>
+<td>All your projects (personal preferences)</td>
+</tr>
+<tr>
+<td><code>./CLAUDE.md</code> (project root)</td>
+<td>Everyone on this project (commit it)</td>
+</tr>
+<tr>
+<td><code>./CLAUDE.local.md</code></td>
+<td>Just you, this project (git-ignore it)</td>
+</tr>
+<tr>
+<td><code>./some/subfolder/CLAUDE.md</code></td>
+<td>Loaded when Claude works in that folder</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-to-put-in-it">What to put in it</h4>
+<pre><code class="language-markdown"># Project: Payments Service
+
+## Commands
+- Build: `make build`
+- Test all: `make test`
+- Test one file: `pytest tests/test_x.py -k name`
+- Lint: `make lint` (must pass before committing)
+
+## Architecture
+- `api/` – FastAPI routes; `core/` – business logic; `db/` – SQLAlchemy models
+- Never call the DB directly from routes; go through `core/` services
+
+## Conventions
+- Python 3.12, type hints required, use `pydantic` v2 models
+- Tests use pytest fixtures in `tests/conftest.py`, not unittest
+- Branch names: `feature/&lt;ticket&gt;-short-desc`
+
+## Gotchas
+- `settings.py` reads from env; tests need `ENV=test`
+- The `legacy/` folder is frozen. Do not modify.
+</code></pre>
+<h4 id="importing-other-files">Importing other files</h4>
+<p>CLAUDE.md can pull in other files with <code>@</code>, so it stays short while you keep detail elsewhere:</p>
+<pre><code class="language-markdown">See @README.md for an overview and @docs/api-conventions.md for API rules.
+- Git workflow: @docs/git-workflow.md
+</code></pre>
+<h4 id="tips">Tips</h4>
+<ul>
+<li>✅ <strong>Keep it short and specific.</strong> Bullet points beat paragraphs. It costs context every session.</li>
+<li>✅ Include <strong>exact commands</strong> for build, test, and lint. This helps Claude check its own work.</li>
+<li>✅ Write down <strong>gotchas</strong> and "don't do X" rules.</li>
+<li>✅ Update it whenever you catch yourself correcting Claude about the same thing twice.</li>
+<li>✅ Use <code>/memory</code> to open and edit any of your memory files quickly.</li>
+<li>❌ Don't paste whole docs or describe what's obvious from the code.</li>
+<li>❌ Never put secrets in it.</li>
+</ul>
+<h3 id="82-auto-memory-what-claude-learns-over-time">8.2 Auto-Memory: What Claude Learns Over Time</h3>
+<p>Claude Code also keeps its own <strong>persistent memory</strong>. When you tell it something worth remembering, or it learns something non-obvious, it saves a small note that it can recall in future sessions.</p>
+<h4 id="how-it-works">How it works</h4>
+<ul>
+<li>Memories are stored per project, on your machine, under <code>~/.claude/projects/&lt;project&gt;/memory/</code>.</li>
+<li>Each memory is <strong>one small Markdown file holding one fact</strong>.</li>
+<li>A <code>MEMORY.md</code> file acts as an <strong>index</strong> (one line per memory). The index is loaded at the start of each session, and Claude reads the full note when it's relevant.</li>
+<li>Memories can link to each other with <code>[[memory-name]]</code>.</li>
+</ul>
+<h4 id="types-of-memory">Types of memory</h4>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>user</strong></td>
+<td>"Prefers TypeScript; is a backend engineer, new to React"</td>
+</tr>
+<tr>
+<td><strong>feedback</strong></td>
+<td>"Don't add docstrings to test functions. <strong>Why:</strong> team style. <strong>How to apply:</strong> only for public APIs"</td>
+</tr>
+<tr>
+<td><strong>project</strong></td>
+<td>"Code freeze for the v3 release starts 2026-12-15"</td>
+</tr>
+<tr>
+<td><strong>reference</strong></td>
+<td>"Bugs are tracked in Jira project PAY; dashboards at grafana.internal/payments"</td>
+</tr>
+</tbody>
+</table>
+<h4 id="example-memory-file">Example memory file</h4>
+<pre><code class="language-markdown">---
+name: prefer-pytest-fixtures
+description: User wants pytest fixtures, never unittest-style setUp
+metadata:
+  type: feedback
+---
+Use pytest fixtures from tests/conftest.py instead of unittest setUp/tearDown.
+**Why:** the team migrated off unittest in 2025; mixed styles fail review.
+**How to apply:** any new or edited test file. See also [[test-commands]].
+</code></pre>
+<h4 id="using-it">Using it</h4>
+<ul>
+<li><strong>Ask directly:</strong> <em>"remember that I prefer small PRs under 300 lines"</em> or <em>"forget what you saved about the staging URL."</em></li>
+<li><strong>Correct Claude:</strong> when you correct it, it may save that as feedback so it doesn't repeat the mistake.</li>
+<li><strong>Review it now and then:</strong> open the memory folder (or ask <em>"what do you remember about me and this project?"</em>) and delete anything stale or wrong. Memories show what was true <em>when they were written</em>.</li>
+<li><strong>Turning it off:</strong> auto-memory can be disabled in settings. Check <code>/config</code> or the docs for your version.</li>
+</ul>
+<h4 id="what-does-not-belong-in-auto-memory">What does <em>not</em> belong in auto-memory</h4>
+<ul>
+<li>Things the repo already records: code structure, git history, CLAUDE.md content</li>
+<li>Details that only matter for the current conversation</li>
+<li>Secrets or credentials</li>
+</ul>
+<h3 id="83-which-mechanism-should-i-use">8.3 Which Mechanism Should I Use?</h3>
+<table>
+<thead>
+<tr>
+<th>You want…</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The whole team to follow a rule</td>
+<td><strong>Project CLAUDE.md</strong> (committed)</td>
+</tr>
+<tr>
+<td>Your personal preferences in every project</td>
+<td><strong><code>~/.claude/CLAUDE.md</code></strong> or <strong>auto-memory</strong></td>
+</tr>
+<tr>
+<td>Claude to remember a correction or a fact it learned</td>
+<td><strong>Auto-memory</strong> ("remember that…")</td>
+</tr>
+<tr>
+<td>A repeatable, multi-step procedure on demand</td>
+<td><strong>A skill</strong> (<a href="#111-skills">Section 11.1</a>)</td>
+</tr>
+<tr>
+<td>Something that must happen <strong>every time</strong>, no exceptions</td>
+<td><strong>A hook</strong> (<a href="#114-hooks">Section 11.4</a>)</td>
+</tr>
+<tr>
+<td>A focused helper with its own context and tools</td>
+<td><strong>A subagent</strong> (<a href="#112-subagents">Section 11.2</a>)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>Memory and CLAUDE.md are guidance.</strong> Claude reads them and usually follows them, but nothing enforces them. If something <em>must</em> happen (formatting, blocking a command), use a hook or a permission rule.</p>
+</blockquote>
+<hr />
+<h2 id="9-command-line-usage-flags--scripting">9. Command-Line Usage (Flags &amp; Scripting)</h2>
+<h3 id="starting-sessions">Starting sessions</h3>
+<pre><code class="language-bash">claude                              # interactive session
+claude &quot;explain the auth flow&quot;      # interactive, with a starting prompt
+claude -c                           # continue the most recent session here
+claude -r                           # pick a past session to resume
+claude --model opus                 # choose a model
+claude --effort high                # more thinking (low|medium|high|xhigh|max)
+claude --add-dir ../shared-lib      # give access to another folder
+claude -w my-feature                # work in an isolated git worktree
+claude -n &quot;bugfix-123&quot;              # give the session a name
+</code></pre>
+<h3 id="non-interactive--scripting-mode--p">Non-interactive / scripting mode (<code>-p</code>)</h3>
+<p><code>-p</code> (print) runs one prompt, prints the result, and exits. It works well in scripts, CI, and pipes.</p>
+<pre><code class="language-bash"># One-off question
+claude -p &quot;what does src/utils/retry.ts do?&quot;
+
+# Pipe data in
+cat error.log | claude -p &quot;what's the root cause of this error?&quot;
+git diff | claude -p &quot;write a concise commit message for this diff&quot;
+
+# Machine-readable output
+claude -p &quot;list all TODOs in src/&quot; --output-format json
+
+# Limit what it can do (good for CI)
+claude -p &quot;fix the lint errors&quot; --allowedTools &quot;Edit&quot; &quot;Bash(npm run lint)&quot;
+
+# Cap the spend
+claude -p &quot;triage these test failures&quot; --max-budget-usd 2
+</code></pre>
+<h3 id="useful-subcommands">Useful subcommands</h3>
+<pre><code class="language-bash">claude mcp add ...       # add an MCP server
+claude mcp list          # list configured MCP servers
+claude plugin ...        # manage plugins
+claude doctor            # health check
+claude update            # update to the latest version
+claude agents            # list background sessions
+</code></pre>
+<hr />
+<h2 id="10-managing-context--sessions">10. Managing Context &amp; Sessions</h2>
+<p>The context window is limited. As it fills, responses can get slower and less focused. <strong>Managing context is the most important habit to build.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Do this</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Starting an unrelated task</td>
+<td><code>/clear</code></td>
+</tr>
+<tr>
+<td>Long task, want to keep going</td>
+<td><code>/compact</code> (optionally with a focus)</td>
+</tr>
+<tr>
+<td>Curious what's using space</td>
+<td><code>/context</code></td>
+</tr>
+<tr>
+<td>Coming back tomorrow</td>
+<td><code>claude -c</code> or <code>/resume</code></td>
+</tr>
+<tr>
+<td>Claude went down a wrong path</td>
+<td><code>Esc Esc</code> / <code>/rewind</code> to an earlier point</td>
+</tr>
+<tr>
+<td>Need a big side investigation</td>
+<td>Ask Claude to <strong>use a subagent</strong>, which keeps the main context clean</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>Rule of thumb:</strong> one task per session. <code>/clear</code> between tasks is cheap, and it beats dragging old, unrelated context along.</p>
+</blockquote>
+<h3 id="saving-work-across-sessions">Saving work across sessions</h3>
+<p>For long projects, ask Claude to keep a progress file:</p>
+<pre><code class="language-text">&gt; write our plan and progress so far to PLAN.md so we can pick up later
+</code></pre>
+<p>Next session: <code>&gt; read PLAN.md and continue from where we left off</code>.</p>
+<hr />
+<h2 id="11-extending-claude-code">11. Extending Claude Code</h2>
+<p>You don't need any of this on day one. Come back once you're comfortable with the basics.</p>
+<table>
+<thead>
+<tr>
+<th>Extension</th>
+<th>What it is</th>
+<th>Who triggers it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Skills</strong></td>
+<td>Saved instructions (plus optional scripts or reference files)</td>
+<td>You (<code>/name</code>) or Claude, when the task matches</td>
+</tr>
+<tr>
+<td><strong>Subagents</strong></td>
+<td>Helper agents with their own context, prompt, and tools</td>
+<td>Claude, or you on request</td>
+</tr>
+<tr>
+<td><strong>MCP servers</strong></td>
+<td>Connections to outside systems (GitHub, Jira, databases…)</td>
+<td>Claude, through tools</td>
+</tr>
+<tr>
+<td><strong>Hooks</strong></td>
+<td>Shell commands run automatically on events</td>
+<td>The harness. Guaranteed to run.</td>
+</tr>
+<tr>
+<td><strong>Plugins</strong></td>
+<td>Installable bundles of all of the above</td>
+<td>Installed once, then always available</td>
+</tr>
+</tbody>
+</table>
+<h3 id="111-skills">11.1 Skills</h3>
+<p>A <strong>skill</strong> is a packaged set of instructions for a particular kind of task, such as "fix a GitHub issue", "write release notes", or "deploy to staging". Skills replace and extend the older "custom slash commands".</p>
+<h4 id="where-skills-live">Where skills live</h4>
+<table>
+<thead>
+<tr>
+<th>Location</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>~/.claude/skills/&lt;name&gt;/SKILL.md</code></td>
+<td>Personal: available in all your projects</td>
+</tr>
+<tr>
+<td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td>
+<td>Project: commit it to share with your team</td>
+</tr>
+<tr>
+<td>Inside a plugin</td>
+<td>Comes with the plugin (<a href="#115-plugins">11.5</a>)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="anatomy-of-a-skill">Anatomy of a skill</h4>
+<p>A skill is a <strong>folder</strong>. <code>SKILL.md</code> is required; everything else is optional:</p>
+<pre><code class="language-text">.claude/skills/release-notes/
+├── SKILL.md            # instructions + frontmatter (required)
+├── template.md         # reference material Claude can read when needed
+└── scripts/
+    └── collect_prs.sh  # helper script Claude can run
+</code></pre>
+<h4 id="skillmd-example">SKILL.md example</h4>
+<pre><code class="language-markdown">---
+name: release-notes
+description: Draft release notes from merged PRs since the last tag. Use when the user asks for release notes, a changelog, or &quot;what shipped&quot;.
+argument-hint: &quot;[since-tag]&quot;
+allowed-tools: Bash(git log:*), Bash(gh pr list:*), Read, Write
+---
+Draft release notes for changes since $ARGUMENTS (default: the latest git tag).
+
+1. Run `scripts/collect_prs.sh $ARGUMENTS` to list merged PRs.
+2. Group them into Features, Fixes, and Internal, following `template.md`.
+3. Write user-facing wording; skip purely internal refactors.
+4. Save the result to `RELEASE_NOTES.md` and show me a summary.
+</code></pre>
+<h4 id="frontmatter-fields">Frontmatter fields</h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>The command name, run as <code>/release-notes</code></td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><strong>The most important field.</strong> Claude reads it to decide when to use the skill on its own.</td>
+</tr>
+<tr>
+<td><code>argument-hint</code></td>
+<td>Shown in the <code>/</code> menu to suggest arguments</td>
+</tr>
+<tr>
+<td><code>allowed-tools</code></td>
+<td>Tools the skill may use without asking for permission</td>
+</tr>
+<tr>
+<td><code>disable-model-invocation</code></td>
+<td><code>true</code> = only <em>you</em> can run it (good for deploys and other risky actions)</td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td>Run the skill on a specific model</td>
+</tr>
+</tbody>
+</table>
+<p>Inside the body, <code>$ARGUMENTS</code> is replaced with whatever you type after the command.</p>
+<h4 id="two-ways-a-skill-runs">Two ways a skill runs</h4>
+<ol>
+<li><strong>You call it:</strong> <code>/release-notes v2.3.0</code></li>
+<li><strong>Claude picks it:</strong> you say <em>"what shipped this week?"</em> and Claude recognizes from the <code>description</code> that <code>release-notes</code> fits, then loads it.</li>
+</ol>
+<h4 id="writing-good-skills">Writing good skills</h4>
+<ul>
+<li>✅ <strong>Write the description for Claude.</strong> Say <em>what</em> it does and <em>when</em> to use it, using the words people actually say ("changelog", "what shipped").</li>
+<li>✅ Keep <code>SKILL.md</code> focused. Put long reference material in separate files that Claude reads only when needed.</li>
+<li>✅ Bundle <strong>scripts</strong> for steps that must be exact. A script is more reliable than prose instructions.</li>
+<li>✅ Number the steps, and finish with a verification step (run tests, show a summary).</li>
+<li>✅ Set <code>disable-model-invocation: true</code> on anything with side effects (deploys, sending messages).</li>
+<li>❌ Don't make one giant "do everything" skill. Several small, well-described skills work better.</li>
+</ul>
+<blockquote>
+<p>💡 Type <code>/</code> to see every skill available in the session. Built-in skills include <code>/code-review</code>, <code>/security-review</code>, <code>/simplify</code>, <code>/init</code>, and <code>/loop</code>.</p>
+</blockquote>
+<h3 id="112-subagents">11.2 Subagents</h3>
+<p>A <strong>subagent</strong> is a separate Claude instance that Claude can hand a focused task to. It works in <strong>its own context window</strong> and returns only a summary, so your main conversation stays clean.</p>
+<h4 id="when-subagents-help">When subagents help</h4>
+<ul>
+<li>✅ Broad research: <em>"find every place we call the payments API"</em> (many files, but you only need the answer)</li>
+<li>✅ Independent tasks run <strong>in parallel</strong></li>
+<li>✅ A <strong>fresh-eyes review</strong> that isn't biased by the main conversation</li>
+<li>❌ Not worth it for small lookups you could do in one or two steps. Each subagent costs extra tokens, and some detail is lost in the handoff.</li>
+</ul>
+<h4 id="using-them">Using them</h4>
+<p>Just ask: <em>"use a subagent to investigate how session caching works and report back."</em> Built-in types include a general-purpose agent, a read-only <strong>Explore</strong> agent for searching, and a <strong>Plan</strong> agent for designing implementations.</p>
+<h4 id="defining-your-own">Defining your own</h4>
+<p>Create one with <code>/agents</code> (interactive), or add a file to <code>.claude/agents/</code> (project) or <code>~/.claude/agents/</code> (personal):</p>
+<pre><code class="language-markdown">---
+name: test-writer
+description: Writes thorough unit tests for a given module. Use after implementing new code or when coverage is missing.
+tools: Read, Grep, Glob, Write, Bash(npm test:*)
+model: sonnet
+---
+You are a meticulous test engineer.
+- Read the target module and its existing tests first.
+- Cover happy paths, edge cases, and error handling.
+- Follow the conventions in tests/README.md. No mocking of internal modules.
+- Run the tests and make sure they pass before reporting.
+- Report: files created, cases covered, and any bugs you found.
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>How you and Claude refer to it</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>When Claude should use it (Claude reads this to decide)</td>
+</tr>
+<tr>
+<td><code>tools</code></td>
+<td><strong>Limit</strong> what it can do. A reviewer might only get read-only tools.</td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td>Use a cheaper or faster model for simple roles, a stronger one for hard ones</td>
+</tr>
+</tbody>
+</table>
+<p>You can also start a whole session as an agent: <code>claude --agent test-writer</code>.</p>
+<h3 id="113-mcp-servers">11.3 MCP Servers</h3>
+<p><strong>MCP (Model Context Protocol)</strong> servers give Claude new tools that connect to outside systems.</p>
+<pre><code class="language-bash"># Add a remote (HTTP) server
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+
+# Add a local server that runs as a process
+claude mcp add my-db -- npx -y @example/postgres-mcp postgresql://localhost/dev
+
+# Manage
+claude mcp list
+claude mcp remove my-db
+</code></pre>
+<ul>
+<li>Inside a session, <code>/mcp</code> shows server status and handles login (OAuth).</li>
+<li>Share servers with your team through a project <code>.mcp.json</code> file.</li>
+<li><strong>Only add servers you trust.</strong> They can read data and take actions for you.</li>
+</ul>
+<h3 id="114-hooks">11.4 Hooks</h3>
+<p>Hooks are shell commands the harness runs <strong>automatically</strong> at set points. Unlike CLAUDE.md, they always run.</p>
+<h4 id="common-events">Common events</h4>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Fires when</th>
+<th>Example use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PreToolUse</code></td>
+<td>Before a tool runs (can <strong>block</strong> it)</td>
+<td>Block edits to <code>legacy/</code>, or block <code>git push --force</code></td>
+</tr>
+<tr>
+<td><code>PostToolUse</code></td>
+<td>After a tool runs</td>
+<td>Auto-format edited files, run the linter</td>
+</tr>
+<tr>
+<td><code>UserPromptSubmit</code></td>
+<td>When you send a prompt</td>
+<td>Add context, such as the current ticket</td>
+</tr>
+<tr>
+<td><code>Stop</code></td>
+<td>When Claude finishes responding</td>
+<td>Play a sound, or send a desktop notification</td>
+</tr>
+<tr>
+<td><code>SessionStart</code></td>
+<td>When a session starts</td>
+<td>Load environment info</td>
+</tr>
+</tbody>
+</table>
+<h4 id="example-auto-format-after-edits">Example: auto-format after edits</h4>
+<pre><code class="language-json">{
+  &quot;hooks&quot;: {
+    &quot;PostToolUse&quot;: [
+      {
+        &quot;matcher&quot;: &quot;Edit|Write&quot;,
+        &quot;hooks&quot;: [{ &quot;type&quot;: &quot;command&quot;, &quot;command&quot;: &quot;jq -r '.tool_input.file_path' | xargs npx prettier --write&quot; }]
+      }
+    ]
+  }
+}
+</code></pre>
+<p>Hooks receive event details as <strong>JSON on stdin</strong> (tool name, inputs, and so on). A hook can block an action by exiting with a specific error code. See the docs for details.</p>
+<p>Set hooks up with <code>/hooks</code>, or in any <code>settings.json</code> file. You can also just ask Claude: <em>"whenever you edit a Python file, run ruff on it."</em> It will configure the hook for you.</p>
+<blockquote>
+<p>⚠️ Hooks run with <strong>your</strong> permissions. Review any hook before you enable it, especially ones from other people.</p>
+</blockquote>
+<h3 id="115-plugins">11.5 Plugins</h3>
+<p>A <strong>plugin</strong> bundles skills, subagents, hooks, and MCP servers into one installable package. Plugins come from <strong>marketplaces</strong> (a GitHub repo, a URL, or a local folder that lists plugins).</p>
+<pre><code class="language-bash"># Add a marketplace, then install from it
+claude plugin marketplace add &lt;github-org/repo or URL&gt;
+claude plugin install &lt;plugin-name&gt;@&lt;marketplace&gt;
+
+# Manage
+claude plugin list
+claude plugin details &lt;plugin&gt;     # what's inside + estimated context cost
+claude plugin disable &lt;plugin&gt;
+claude plugin update &lt;plugin&gt;
+claude plugin uninstall &lt;plugin&gt;
+
+# Build your own
+claude plugin init my-plugin       # scaffold a new plugin
+claude plugin validate ./my-plugin
+</code></pre>
+<p>In a session, <code>/plugin</code> offers the same functions through menus.</p>
+<p><strong>When to make a plugin:</strong> once you have skills, agents, or hooks that several projects or teammates should share, bundle them so everyone installs one thing and stays in sync.</p>
+<blockquote>
+<p>⚠️ Plugins can include hooks and MCP servers that run code on your machine. Install only from sources you trust.</p>
+</blockquote>
+<hr />
+<h2 id="12-best-practices">12. Best Practices</h2>
+<h3 id="-1-give-claude-a-way-to-check-its-own-work">🎯 1. Give Claude a way to check its own work</h3>
+<p>This is the <strong>biggest</strong> factor in quality. Claude does far better when it can verify results:</p>
+<ul>
+<li>Tell it how to run tests, the linter, and the type-checker (put this in CLAUDE.md)</li>
+<li>Ask it to <strong>write tests first</strong>, then make them pass</li>
+<li>For UI work, give it a screenshot target, or let it look at the page through a browser tool</li>
+</ul>
+<h3 id="-2-explore--plan--code--commit">🗺️ 2. Explore → Plan → Code → Commit</h3>
+<p>For anything bigger than a small fix:</p>
+<ol>
+<li><strong>Explore</strong>: "Read the auth module and related tests. Don't write code yet."</li>
+<li><strong>Plan</strong>: switch to <strong>Plan Mode</strong> (<code>Shift+Tab</code>) or say "make a plan." Review it and push back.</li>
+<li><strong>Code</strong>: "Go ahead and implement the plan. Run tests as you go."</li>
+<li><strong>Commit</strong>: "Commit this with a descriptive message" (and open a PR if you want).</li>
+</ol>
+<p>Skipping the plan step on complex work is the most common beginner mistake.</p>
+<h3 id="-3-be-specific">📝 3. Be specific</h3>
+<table>
+<thead>
+<tr>
+<th>❌ Vague</th>
+<th>✅ Specific</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"fix the bug"</td>
+<td>"Login fails with a 500 when the email has a <code>+</code>. Reproduce it with a test, then fix it."</td>
+</tr>
+<tr>
+<td>"add tests"</td>
+<td>"Add tests for <code>parseDate</code> in <code>utils/date.ts</code> covering invalid input, timezones, and leap years. Don't use mocks."</td>
+</tr>
+<tr>
+<td>"make it better"</td>
+<td>"Refactor <code>OrderService</code> to cut duplication between <code>create</code> and <code>update</code>. Keep the public API unchanged."</td>
+</tr>
+</tbody>
+</table>
+<h3 id="-4-give-rich-context">📎 4. Give rich context</h3>
+<ul>
+<li>Point to files with <code>@</code>: <em>"follow the pattern in @src/routes/users.ts"</em></li>
+<li>Paste error messages, stack traces, and logs in full</li>
+<li>Drop in screenshots and mockups</li>
+<li>Share URLs to docs or issues</li>
+<li>Pipe data in: <code>cat data.csv | claude</code></li>
+</ul>
+<h3 id="-5-course-correct-early-and-often">🛑 5. Course-correct early and often</h3>
+<ul>
+<li>Press <strong><code>Esc</code></strong> as soon as it goes the wrong way</li>
+<li>Use <strong><code>Esc Esc</code></strong> to rewind and try a different prompt</li>
+<li>If you've corrected it twice on the same thing, <code>/clear</code> and start over with a better prompt. A clean start usually beats a cluttered context.</li>
+</ul>
+<h3 id="-6-keep-context-clean">🧹 6. Keep context clean</h3>
+<ul>
+<li><code>/clear</code> between unrelated tasks</li>
+<li>Use subagents for broad research</li>
+<li>Keep CLAUDE.md short</li>
+</ul>
+<h3 id="-7-review-everything">🔁 7. Review everything</h3>
+<p>Claude is capable but can make mistakes. <strong>You own the code you ship.</strong></p>
+<ul>
+<li>Read the diffs before you accept them</li>
+<li>Run <code>/code-review</code> before committing</li>
+<li>Be extra careful with security, data deletion, migrations, and money-related code</li>
+</ul>
+<h3 id="-8-use-git-as-your-safety-net">🌿 8. Use git as your safety net</h3>
+<ul>
+<li>Work on a branch, and commit often so there's a checkpoint to return to</li>
+<li>Use <strong>worktrees</strong> (<code>claude -w name</code>) to run several Claude sessions on different tasks in parallel without clashes</li>
+</ul>
+<h3 id="-9-pick-the-right-model-and-effort">🧠 9. Pick the right model and effort</h3>
+<ul>
+<li>Hard design or debugging problems: a stronger model (<code>/model opus</code>) or higher <code>--effort</code></li>
+<li>Simple or repetitive edits: a faster, cheaper model</li>
+<li>Watch spend with <code>/cost</code></li>
+</ul>
+<h3 id="-10-let-claude-teach-you">📚 10. Let Claude teach you</h3>
+<p>Claude Code is also a great way to learn a codebase:</p>
+<ul>
+<li><em>"How does a request flow from the router to the database?"</em></li>
+<li><em>"Why was this written this way? Check git blame and history."</em></li>
+<li><em>"What are the edge cases in this function?"</em></li>
+</ul>
+<hr />
+<h2 id="13-effective-prompting-patterns">13. Effective Prompting Patterns</h2>
+<p>Copy and adapt these:</p>
+<p><strong>Understand code</strong></p>
+<pre><code class="language-text">&gt; explain how authentication works in this app. trace a login request end to end, with file references
+</code></pre>
+<p><strong>Fix a bug (test-first)</strong></p>
+<pre><code class="language-text">&gt; users report &lt;symptom&gt;. first write a failing test that reproduces it, then fix it. don't change the test to make it pass
+</code></pre>
+<p><strong>Plan a feature</strong></p>
+<pre><code class="language-text">&gt; I want to add CSV export to the reports page. explore the relevant code and propose a plan with the files you'd change. don't write code yet
+</code></pre>
+<p><strong>Refactor safely</strong></p>
+<pre><code class="language-text">&gt; refactor @src/billing.ts to split it into smaller modules. behaviour must stay identical. run the tests before and after
+</code></pre>
+<p><strong>Code review</strong></p>
+<pre><code class="language-text">&gt; review my uncommitted changes for bugs, edge cases, and anything that doesn't match the project's conventions
+</code></pre>
+<p><strong>Git workflow</strong></p>
+<pre><code class="language-text">&gt; look at my changes, write a good commit message, and commit. then open a PR with a summary
+</code></pre>
+<p><strong>Ask for options</strong></p>
+<pre><code class="language-text">&gt; what are 2–3 ways to implement rate limiting here? give pros and cons and your recommendation
+</code></pre>
+<p><strong>Interview me first</strong> (good for vague requirements)</p>
+<pre><code class="language-text">&gt; I want to build a notification system. ask me questions to clarify requirements before planning anything
+</code></pre>
+<hr />
+<h2 id="14-safety--security">14. Safety &amp; Security</h2>
+<ul>
+<li>🔐 <strong>Never paste secrets</strong> (API keys, passwords) into prompts or CLAUDE.md. Use <code>deny</code> rules to block reading <code>.env</code> and secrets files.</li>
+<li>👀 <strong>Read commands before approving them</strong>, especially ones that delete, push, deploy, or touch production.</li>
+<li>🚫 <strong>Avoid <code>--dangerously-skip-permissions</code></strong> except in isolated, disposable containers with no access to sensitive systems.</li>
+<li>🧪 <strong>Be wary of untrusted content.</strong> Files, web pages, or issues from unknown sources can contain hidden instructions (prompt injection). Review what Claude wants to do after it reads them.</li>
+<li>🌿 <strong>Work on branches</strong> and review diffs before merging.</li>
+<li>🏢 <strong>Follow your organization's policies</strong> on which code and data can be shared with AI tools.</li>
+</ul>
+<hr />
+<h2 id="15-troubleshooting">15. Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Try</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Something seems broken</td>
+<td><code>claude doctor</code> or <code>/doctor</code></td>
+</tr>
+<tr>
+<td>Claude is slow or losing focus</td>
+<td><code>/context</code> to check usage, then <code>/compact</code> or <code>/clear</code></td>
+</tr>
+<tr>
+<td>Claude keeps making the same mistake</td>
+<td>Add a rule to CLAUDE.md, or <code>/clear</code> and re-prompt more clearly</td>
+</tr>
+<tr>
+<td>Too many permission prompts</td>
+<td>Add allow rules with <code>/permissions</code>, or use Accept Edits mode</td>
+</tr>
+<tr>
+<td>Shift+Enter doesn't add a new line</td>
+<td><code>/terminal-setup</code></td>
+</tr>
+<tr>
+<td>MCP server not working</td>
+<td><code>/mcp</code> to check status and re-authenticate; <code>claude --debug mcp</code></td>
+</tr>
+<tr>
+<td>Login or auth problems</td>
+<td><code>claude auth</code> / <code>/login</code> / <code>/logout</code></td>
+</tr>
+<tr>
+<td>Outdated version</td>
+<td><code>claude update</code></td>
+</tr>
+<tr>
+<td>Want to report a bug</td>
+<td><code>/bug</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="16-quick-reference-cheat-sheet">16. Quick Reference Cheat Sheet</h2>
+<pre><code class="language-text">┌──────────────────────────────── STARTING ────────────────────────────────┐
+│ claude                  start interactive session                        │
+│ claude -c               continue last session                            │
+│ claude -r               resume a past session                            │
+│ claude -p &quot;prompt&quot;      one-shot, print and exit (scripts/CI)            │
+│ claude -w name          isolated git worktree session                    │
+├──────────────────────────────── IN-SESSION ──────────────────────────────┤
+│ Esc                     stop Claude                                      │
+│ Esc Esc                 rewind to earlier message                        │
+│ Shift+Tab               cycle modes (normal / accept edits / plan)       │
+│ @file                   reference a file                                 │
+│ !cmd                    run shell command yourself                       │
+│ Shift+Enter             new line                                         │
+├──────────────────────────────── COMMANDS ────────────────────────────────┤
+│ /init      create CLAUDE.md        /clear     reset context              │
+│ /compact   summarize context       /context   view context usage         │
+│ /model     switch model            /resume    resume session             │
+│ /permissions  tool rules           /memory    edit CLAUDE.md             │
+│ /code-review  review changes       /cost      usage &amp; spend              │
+│ /mcp       integrations            /agents    subagents                  │
+│ /hooks     automation              /plugin    install plugins            │
+│ /          list skills &amp; commands  /help      everything else            │
+├──────────────────────────────── GOLDEN RULES ────────────────────────────┤
+│ 1. Give Claude a way to verify (tests, lint, screenshots)                │
+│ 2. Explore → Plan → Code → Commit                                        │
+│ 3. Be specific; give context with @files, errors, images                 │
+│ 4. Interrupt early; /clear often                                         │
+│ 5. Keep CLAUDE.md short; review auto-memory now and then                 │
+│ 6. Review every diff. You own the code.                                  │
+└──────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr />
+<h2 id="further-reading">Further Reading</h2>
+<ul>
+<li>Official docs: https://docs.claude.com/en/docs/claude-code/overview</li>
+<li>Best practices (Anthropic engineering blog): https://www.anthropic.com/engineering/claude-code-best-practices</li>
+<li>In the CLI: <code>claude --help</code> and <code>/help</code></li>
+<li>Or just ask Claude Code: <em>"how do I set up a hook that runs tests after edits?"</em> It can answer questions about itself.</li>
+</ul>
+    <footer class="site-footer">
+      <p>Community guide. Not an official Anthropic publication, and not affiliated with or endorsed by Anthropic.
+      Claude Code changes quickly, so check the <a href="https://docs.claude.com/en/docs/claude-code/overview">official docs</a> for the latest.
+      Last updated 26 November 2026.</p>
+    </footer>
+  </article></main>
+</div>
+<button class="to-top" aria-label="Back to top">↑</button>
+<script>
+  // Wrap tables for horizontal scroll on small screens
+  document.querySelectorAll('article table').forEach(t => {
+    const w = document.createElement('div'); w.className = 'table-wrap';
+    t.parentNode.insertBefore(w, t); w.appendChild(t);
+  });
+  // Copy buttons on code blocks
+  document.querySelectorAll('article pre').forEach(pre => {
+    const b = document.createElement('button');
+    b.className = 'copy-btn'; b.textContent = 'Copy';
+    b.onclick = () => navigator.clipboard.writeText(pre.innerText.replace(/Copy(ied!)?$/, '').trimEnd())
+      .then(() => { b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy', 1500); });
+    pre.appendChild(b);
+  });
+  // Mobile menu
+  const sidebar = document.querySelector('nav.sidebar');
+  document.querySelector('.menu-toggle').onclick = () => sidebar.classList.toggle('open');
+  sidebar.querySelectorAll('a').forEach(a => a.onclick = () => sidebar.classList.remove('open'));
+  // Highlight current section in sidebar
+  const links = [...sidebar.querySelectorAll('a')];
+  const targets = links.map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+  const topBtn = document.querySelector('.to-top');
+  topBtn.onclick = () => window.scrollTo({ top: 0 });
+  const onScroll = () => {
+    let current = targets[0];
+    for (const t of targets) if (t.getBoundingClientRect().top < 120) current = t;
+    links.forEach(a => a.classList.toggle('active', current && a.getAttribute('href') === '#' + current.id));
+    topBtn.classList.toggle('show', window.scrollY > 600);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+</script>
+</body>
+</html>
